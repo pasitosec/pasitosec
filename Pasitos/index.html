@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Primeros Pasitos | Educación Inicial Élite</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+
+    <style>
+        :root {
+            --azul: #004D95; --celeste: #8BC8D1; --turquesa: #009BB4;
+            --verde: #D1E000; --fucsia: #E5007D; --naranja: #F58220;
+            --gris: #3C3C3B; --blanco: #ffffff;
+            
+            /* PERSONALIZACIÓN DE COLOR PLYR (SOLO NARANJA) */
+            --plyr-color-main: var(--naranja);
+        }
+
+        body, html { margin: 0; padding: 0; font-family: 'Fredoka', sans-serif; color: var(--gris); overflow-x: hidden; scroll-behavior: smooth; }
+
+        /* --- FONDO DINÁMICO --- */
+        .bg-master { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: linear-gradient(180deg, #f0f8fa 0%, #ffffff 100%); }
+        .bg-master::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(var(--celeste) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.15; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(100px); animation: float 20s infinite alternate; opacity: 0.3; }
+        .blob-1 { top: -5%; right: -5%; width: 600px; height: 600px; background: var(--celeste); }
+        .blob-2 { bottom: 5%; left: -5%; width: 500px; height: 500px; background: var(--verde); }
+        @keyframes float { from { transform: translate(0,0); } to { transform: translate(60px, 40px); } }
+
+        /* --- NAVEGACIÓN --- */
+        .nav-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 5%; position: fixed; top: 0; width: 100%; box-sizing: border-box; z-index: 2000; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-bottom: 4px solid var(--azul); }
+        .nav-logo img { height: 75px; }
+        .nav-links { display: flex; gap: 25px; align-items: center; }
+        .nav-link { text-decoration: none; color: var(--azul); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; transition: 0.3s; }
+        .nav-link:hover, .dropdown:hover > .nav-link { color: var(--fucsia); }
+
+        .dropdown { position: relative; }
+        .dropdown-content { display: none; position: absolute; background: white; min-width: 250px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-radius: 15px; overflow: hidden; top: 100%; left: 0; border-top: 5px solid var(--naranja); }
+        .dropdown-content a { color: var(--azul); padding: 15px 20px; text-decoration: none; display: block; font-size: 0.85rem; font-weight: 700; transition: 0.3s; }
+        .dropdown-content a:hover { background: var(--celeste); color: white; }
+        .dropdown:hover .dropdown-content { display: block; }
+
+        .nav-socials { display: flex; gap: 12px; align-items: center; border-left: 2px solid #ddd; padding-left: 15px; }
+        .nav-socials a { color: var(--azul); font-size: 1.2rem; transition: 0.3s; }
+        .nav-socials a:hover { color: var(--fucsia); transform: scale(1.2); }
+        .btn-nav-matricula { background: var(--naranja); color: white !important; padding: 10px 20px; border-radius: 50px; font-weight: 800; text-decoration: none; font-size: 0.8rem; }
+
+        /* BOTÓN HAMBURGUESA */
+        .menu-toggle { display: none; background: none; border: none; color: var(--azul); font-size: 1.8rem; cursor: pointer; }
+
+        /* --- HERO --- */
+        .hero { padding: 160px 10% 60px 10%; display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; align-items: center; }
+        .hero-text h1 { font-size: 4.5rem; color: var(--azul); margin: 0; line-height: 0.95; font-weight: 700; }
+        .hero-text p { font-size: 1.3rem; color: #555; margin: 25px 0 35px 0; max-width: 550px; }
+        .btn-group { display: flex; gap: 20px; }
+        .btn-hero { padding: 20px 40px; border-radius: 50px; text-decoration: none; font-weight: 800; text-transform: uppercase; transition: 0.3s; font-size: 0.9rem; border: none; cursor: pointer; }
+        .btn-primary { background: var(--naranja); color: white; box-shadow: 0 10px 25px rgba(245, 130, 32, 0.3); }
+        .btn-secondary { background: var(--azul); color: white; }
+
+        .video-side { text-align: center; display: flex; flex-direction: column; align-items: flex-end; } 
+        .video-title { font-size: 2rem; font-weight: 900; color: var(--azul); text-transform: uppercase; margin-bottom: 20px; display: block; letter-spacing: 2px; align-self: center; }
+        
+        .video-box { 
+            width: 80%; 
+            margin-right: 10%; 
+            aspect-ratio: 16/9; 
+            background: #000; 
+            border-radius: 35px; 
+            border: 12px solid white; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15); 
+            overflow: hidden; 
+            position: relative; 
+            transition: 0.5s;
+        }
+        .video-box:hover { transform: scale(1.02); }
+        
+        .plyr--video { border-radius: 23px; overflow: hidden; } 
+        video { width: 100%; height: 100%; object-fit: cover; }
+
+        /* --- ¿QUIÉNES SOMOS? --- */
+        .mvm-section { padding: 60px 10%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .mvm-card { background: white; padding: 45px 30px; border-radius: 35px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.04); transition: 0.4s; border-bottom: 8px solid transparent; }
+        .mvm-card:hover { transform: translateY(-10px); }
+        .mvm-card i { font-size: 3rem; margin-bottom: 20px; }
+        .color-turquesa { border-color: var(--turquesa); } .color-turquesa i { color: var(--turquesa); }
+        .color-fucsia { border-color: var(--fucsia); } .color-fucsia i { color: var(--fucsia); }
+        .color-verde { border-color: var(--verde); } .color-verde i { color: var(--verde); }
+
+        /* --- NIVELES (SMS STYLE) --- */
+        .niveles-section { padding: 80px 10%; text-align: center; }
+        .niveles-header h2 { font-size: 3.5rem; color: var(--azul); text-transform: uppercase; margin: 0 0 50px 0; }
+        .niveles-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .card-sms { background: white; border: 1px solid #eee; border-radius: 20px; padding: 40px 20px; display: flex; flex-direction: column; align-items: flex-start; text-align: left; transition: 0.4s; position: relative; }
+        .card-sms:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+        .card-sms.featured { border: 2px solid var(--azul); }
+        .card-sms h3 { font-size: 1.8rem; color: var(--azul); margin: 0; font-weight: 900; line-height: 1; }
+        .card-sms .sub-title { font-size: 0.8rem; color: #888; margin: 10px 0 20px 0; font-weight: 600; text-transform: uppercase; }
+        .card-sms .price-tag { font-size: 1.2rem; font-weight: 900; color: var(--naranja); margin-bottom: 25px; }
+        .benefits-list { width: 100%; margin-bottom: 30px; flex-grow: 1; }
+        .benefit-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 0.85rem; color: #444; font-weight: 600; }
+        .benefit-item i { color: var(--verde); font-size: 1.1rem; }
+        .btn-sms { width: 100%; padding: 15px; border-radius: 50px; border: 2px solid var(--azul); background: transparent; color: var(--azul); font-weight: 800; cursor: pointer; text-transform: uppercase; transition: 0.3s; font-size: 0.8rem; }
+        .btn-sms.fill { background: var(--azul); color: white; border: none; }
+        .btn-sms:hover { background: var(--azul); color: white; }
+
+        /* --- FOOTER SMS STYLE --- */
+        footer { background: #fff; padding: 80px 10% 40px 10%; border-top: 5px solid var(--azul); position: relative; }
+        .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 40px; margin-bottom: 60px; }
+        .footer-col h4 { color: var(--azul); font-size: 1.2rem; margin-bottom: 25px; font-weight: 800; text-transform: uppercase; }
+        .footer-col p { color: #666; line-height: 1.6; font-size: 0.95rem; }
+        .footer-col ul { list-style: none; padding: 0; }
+        .footer-col ul li { margin-bottom: 15px; }
+        .footer-col ul li a { text-decoration: none; color: #666; font-weight: 600; transition: 0.3s; font-size: 0.95rem; }
+        .footer-col ul li a:hover { color: var(--fucsia); padding-left: 10px; }
+        .footer-socials { display: flex; gap: 15px; margin-top: 20px; }
+        .footer-socials a { width: 40px; height: 40px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--azul); font-size: 1.2rem; transition: 0.4s; }
+        .footer-socials a:hover { background: var(--azul); color: #fff; transform: translateY(-5px); }
+        .footer-bottom { border-top: 1px solid #eee; padding-top: 30px; text-align: center; color: #aaa; font-size: 0.85rem; font-weight: 600; }
+
+        /* --- RESPONSIVE ADJUSTMENTS --- */
+        @media (max-width: 1100px) {
+            .nav-bar { padding: 10px 5%; }
+            .menu-toggle { display: block; }
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: white;
+                padding: 30px;
+                gap: 20px;
+                box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+                border-bottom: 4px solid var(--azul);
+            }
+            .nav-links.active { display: flex; }
+            .nav-socials { border-left: none; padding-left: 0; justify-content: center; width: 100%; }
+            .dropdown-content { position: static; box-shadow: none; border-top: none; padding-left: 15px; }
+            
+            .footer-grid, .niveles-grid { grid-template-columns: 1fr; }
+            .hero, .mvm-section { grid-template-columns: 1fr; text-align: center; }
+            .hero-text h1 { font-size: 3rem; }
+            .btn-group { justify-content: center; flex-direction: column; }
+            .hero { padding: 120px 5% 40px 5%; gap: 30px; }
+            .video-box { width: 100%; margin-right: 0; }
+            .video-side { align-items: center; }
+        }
+
+        .btn-hero { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important; }
+        .btn-primary:hover { transform: translateY(-8px) scale(1.05); box-shadow: 0 15px 35px rgba(245, 130, 32, 0.6); filter: brightness(1.1); }
+        .btn-secondary:hover { transform: translateY(-8px) scale(1.05); box-shadow: 0 15px 35px rgba(0, 77, 149, 0.5); filter: brightness(1.1); }
+        .btn-hero:active { transform: translateY(-2px) scale(0.98); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); }
+    </style>
+</head>
+<body>
+
+    <div class="bg-master"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
+
+    <nav class="nav-bar">
+        <div class="nav-logo"><img src="https://i.imgur.com/igoZDSU.png"></div>
+        
+        <button class="menu-toggle" id="menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="nav-links" id="nav-menu">
+            <a href="inicio.html" class="nav-link">Inicio</a>
+            <a href="servicios.html" class="nav-link">Servicios</a>
+            <div class="dropdown">
+                <a href="#" class="nav-link">Campus <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i></a>
+                <div class="dropdown-content">
+                    <a href="misprimerospasitos.html">Sede Guayas y Pichincha</a>
+                    <a href="pasitosdeamor.html">Sede Ciudadela de los Ingenieros</a>
+                </div>
+            </div>
+            <a href="testimonios.html" class="nav-link">Testimonios</a>
+            <a href="asesoria.html" class="nav-link">Agenda tu cita</a>
+            <a href="matriculate.html" class="btn-nav-matricula">MATRICÚLATE</a>
+            <div class="nav-socials">
+                <a href="https://www.facebook.com/MisPrimerosPasitosCuenca/"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/primerospasitos_cuenca/"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.tiktok.com/@pasitosdeamor_educuenca?_r=1&_t=ZS-94dDT25bFsF"><i class="fab fa-tiktok"></i></a>
+                <a href="https://wa.link/yp2w5d"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-text animate__animated animate__fadeInLeft">
+            <h1>Creciendo con <br><span style="color: var(--fucsia);">Amor</span> y Alegría</h1>
+            <p>Descubre un mundo de aprendizaje donde la curiosidad de tu hijo no tiene límites. Somos el segundo hogar que tu familia necesita.</p>
+            <div class="btn-group">
+                <a href="matriculate.html" class="btn-hero btn-primary">MATRICÚLATE</a>
+                <a href="asesoria.html" class="btn-hero btn-secondary">AGENDA TU CITA</a>
+            </div>
+        </div>
+        <div class="video-side animate__animated animate__fadeInRight">
+            <span class="video-title">Conócenos</span>
+            <div class="video-box" id="contenedor-video">
+                <div style="height:100%; display:flex; align-items:center; justify-content:center; background: #111;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 4rem; color: var(--celeste);"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mvm-section">
+        <div class="mvm-card color-turquesa">
+            <i class="fas fa-rocket"></i>
+            <h3 style="color: var(--azul); text-transform: uppercase;">Misión</h3>
+            <p>Formar niños autónomos y felices mediante experiencias de aprendizaje significativas.</p>
+        </div>
+        <div class="mvm-card color-fucsia">
+            <i class="fas fa-heart"></i>
+            <h3 style="color: var(--azul); text-transform: uppercase;">Visión</h3>
+            <p>Liderar la educación inicial con innovación pedagógica y calidez humana excepcional.</p>
+        </div>
+        <div class="mvm-card color-verde">
+            <i class="fas fa-puzzle-piece"></i>
+            <h3 style="color: var(--azul); text-transform: uppercase;">Metodología</h3>
+            <p>Fomentamos la exploración sensorial y el arte como pilares del desarrollo cognitivo.</p>
+        </div>
+    </section>
+
+    <section class="niveles-section">
+        <div class="niveles-header">
+            <h2>Niveles <span style="color: var(--naranja);">Educativos</span></h2>
+        </div>
+        <div class="niveles-grid">
+            <div class="card-sms">
+                <h3>MATERNIDAD</h3>
+                <div class="sub-title">Cuidado y Amor</div>
+                <div class="price-tag">ESTIMULACIÓN</div>
+                <div class="benefits-list">
+                    <div class="benefit-item"><i class="fas fa-check-circle"></i> Masaje Infantil</div>
+                    <div class="benefit-item"><i class="fas fa-check-circle"></i> Sueño Seguro</div>
+                    <div class="benefit-item"><i class="fas fa-check-circle"></i> Control Esfínteres</div>
+                </div>
+                <button class="btn-sms">Más información</button>
+            </div>
+            <div class="card-sms featured">
+                <h3>PRE-INICIAL</h3>
+                <div class="sub-title">Habilidades Clave</div>
+                <div class="price-tag">EXPLORACIÓN</div>
+                <div class="benefits-list">
+                    <div class="benefit-item"><i class="fas fa-check-circle"></i> Psicomotricidad</div>
+                    <div class="benefit-item"><i class="fas fa-check-circle"></i> Lenguaje Creativo</div>
+                    <div class="benefit-item"><i class="fas fa-check-circle"></i> Socialización</div>
+                </div>
+                <button class="btn-sms fill">Matricular ahora</button>
+            </div>
+            <div class="card-sms">
+                <h3>INICIAL 1</h3>
+                <div class="sub-title">Primeros Pasos</div>
+                <div class="price-tag">AUTONOMÍA</div>
+                <div class="benefits-list">
+                    <div class="benefit-item"><i class="fas fa-check-circle"></i> Pre-escritura</div>
+                    <div class="benefit-item"><i class="fas fa-check-circle"></i> Pensamiento Lógico</div>
+                    <div class="benefit-item"><i class="fas fa-check-circle"></i> Arte y Música</div>
+                </div>
+                <button class="btn-sms">Más información</button>
+            </div>
+            <div class="card-sms">
+                <h3>INICIAL 2</h3>
+                <div class="sub-title">Preparación</div>
+                <div class="price-tag">EXCELENCIA</div>
+                <div class="benefits-list">
+                    <div class="benefit-item"><i class="fas fa-check-circle"></i> Lectoescritura</div>
+                    <div class="benefit-item"><i class="fas fa-check-circle"></i> Inglés Divertido</div>
+                    <div class="benefit-item"><i class="fas fa-check-circle"></i> Valores S.M.S</div>
+                </div>
+                <button class="btn-sms">Más información</button>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <img src="https://i.imgur.com/igoZDSU.png" style="height: 60px; margin-bottom: 20px;">
+                <p>Brindamos una educación de élite basada en el amor, la seguridad y el desarrollo creativo de los más pequeños. Tu confianza, nuestro mayor compromiso.</p>
+                <div class="footer-socials">
+                    <a href="https://www.facebook.com/MisPrimerosPasitosCuenca/"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.tiktok.com/@pasitosdeamor_educuenca?_r=1&_t=ZS-94dDT25bFsF"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://www.instagram.com/primerospasitos_cuenca/"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.link/yp2w5d"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Sedes</h4>
+                <ul>
+                    <li><a href="pasitosdeamor.html">Sede Ciudadela de Los Ingenieros</a></li>
+                    <li><a href="misprimerospasitos.html">Sede Guayas y Pichincha</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Enlaces</h4>
+                <ul>
+                    <li><a href="inicio.html">Inicio</a></li>
+                    <li><a href="servicios.html">Servicios</a></li>
+                    <li><a href="testimonios.html">Testimonios</a></li>
+                    <li><a href="asesoria.html">Agenda tu cita</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <p><i class="fas fa-map-marker-alt" style="color:var(--fucsia);"></i> Cuenca, Ecuador</p>
+                <p><i class="fas fa-phone" style="color:var(--fucsia);"></i> +593 98 319 7824</p>
+                <p><i class="fas fa-envelope" style="color:var(--fucsia);"></i> cdi.primerospasitos@gmail.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 PASITOS. TODOS LOS DERECHOS RESERVADOS. <br>
+            DISEÑADO POR SOCIAL MEDIA STUDIO.
+        </div>
+    </footer>
+
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+
+    <script>
+        // LÓGICA MENÚ MÓVIL
+        const menuBtn = document.getElementById('menu-btn');
+        const navMenu = document.getElementById('nav-menu');
+
+        menuBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            const icon = menuBtn.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC8E7wan17X4fd_t30HlE71f7w95p3V7X8",
+            authDomain: "pasitos-web.firebaseapp.com",
+            projectId: "pasitos-web",
+            storageBucket: "pasitos-web.firebasestorage.app",
+            messagingSenderId: "516945617009",
+            appId: "1:516945617009:web:67a0c3dd4e2ed4ce207bd0",
+            measurementId: "G-4YSSN2XQYM"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let player;
+
+        async function cargarVideoHome() {
+            try {
+                const docRef = doc(db, "recursos", "videoHome");
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+    const data = docSnap.data();
+    let videoUrl = data.url;
+
+    if (videoUrl.includes("vimeo.com/") && !videoUrl.includes("player.vimeo.com")) {
+        const videoId = videoUrl.split("/").pop();
+        videoUrl = `https://player.vimeo.com/video/${videoId}`;
+    }
+
+    document.getElementById('contenedor-video').innerHTML = `
+        <iframe
+            src="${videoUrl}"
+            width="100%"
+            height="100%"
+            frameborder="0"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowfullscreen
+            style="border:none;width:100%;height:100%;">
+        </iframe>
+    `;
+
+    console.log("🎬 Video Vimeo cargado.");
+}
+            } catch (error) {
+                console.error("❌ Error:", error);
+            }
+        }
+
+        cargarVideoHome();
+        console.log("🚀 Firebase conectado.");
+    </script>
+</body>
+</html>
