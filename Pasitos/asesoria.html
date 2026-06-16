@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asesoría y Soporte | Mis Primeros Pasitos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <style>
+        :root {
+            --azul: #004D95; --celeste: #8BC8D1; --turquesa: #009BB4;
+            --verde: #D1E000; --fucsia: #E5007D; --naranja: #F58220;
+            --gris: #3C3C3B; --blanco: #ffffff;
+        }
+
+        body, html { margin: 0; padding: 0; font-family: 'Fredoka', sans-serif; color: var(--gris); overflow-x: hidden; scroll-behavior: smooth; }
+
+        /* --- FONDO DINÁMICO --- */
+        .bg-master { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: linear-gradient(180deg, #f0f8fa 0%, #ffffff 100%); }
+        .bg-master::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(var(--celeste) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.15; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(100px); animation: float 20s infinite alternate; opacity: 0.3; }
+        .blob-1 { top: -5%; right: -5%; width: 600px; height: 600px; background: var(--celeste); }
+        .blob-2 { bottom: 5%; left: -5%; width: 500px; height: 500px; background: var(--verde); }
+        @keyframes float { from { transform: translate(0,0); } to { transform: translate(60px, 40px); } }
+
+        /* --- NAVEGACIÓN (CLON EXACTO) --- */
+        .nav-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 5%; position: fixed; top: 0; width: 100%; box-sizing: border-box; z-index: 2000; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-bottom: 4px solid var(--azul); }
+        .nav-logo img { height: 75px; }
+        .nav-links { display: flex; gap: 25px; align-items: center; }
+        .nav-link { text-decoration: none; color: var(--azul); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; transition: 0.3s; }
+        .nav-link:hover, .dropdown:hover > .nav-link { color: var(--fucsia); }
+        .dropdown { position: relative; }
+        .dropdown-content { display: none; position: absolute; background: white; min-width: 250px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-radius: 15px; overflow: hidden; top: 100%; left: 0; border-top: 5px solid var(--naranja); }
+        .dropdown-content a { color: var(--azul); padding: 15px 20px; text-decoration: none; display: block; font-size: 0.85rem; font-weight: 700; transition: 0.3s; }
+        .dropdown-content a:hover { background: var(--celeste); color: white; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .nav-socials { display: flex; gap: 12px; align-items: center; border-left: 2px solid #ddd; padding-left: 15px; }
+        .nav-socials a { color: var(--azul); font-size: 1.2rem; transition: 0.3s; }
+        .nav-socials a:hover { color: var(--fucsia); transform: scale(1.2); }
+        .btn-nav-matricula { background: var(--naranja); color: white !important; padding: 10px 20px; border-radius: 50px; font-weight: 800; text-decoration: none; font-size: 0.8rem; }
+        .menu-toggle { display: none; background: none; border: none; color: var(--azul); font-size: 1.8rem; cursor: pointer; }
+
+        /* --- CONTENIDO ASESORÍA --- */
+        .main-container { padding: 160px 10% 80px; }
+        .header-asesoria { text-align: center; margin-bottom: 60px; }
+        .header-asesoria h1 { font-size: 3.5rem; color: var(--azul); font-weight: 700; margin-bottom: 10px; }
+
+        /* PREGUNTAS FRECUENTES */
+        .faq-container { max-width: 800px; margin: 0 auto 100px; }
+        .faq-item { background: white; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); overflow: hidden; transition: 0.3s; }
+        .faq-question { padding: 20px 30px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: var(--azul); }
+        .faq-answer { padding: 0 30px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease; color: #666; line-height: 1.6; }
+        .faq-item.active .faq-answer { padding: 0 30px 20px; max-height: 200px; }
+        .faq-item.active i { transform: rotate(180deg); color: var(--fucsia); }
+
+        /* TICKET Y CONTACTO */
+        .support-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px; }
+        .contact-info-cards { display: grid; gap: 20px; }
+        .c-card { background: white; padding: 30px; border-radius: 30px; display: flex; align-items: center; gap: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.05); text-decoration: none; transition: 0.3s; }
+        .c-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,77,149,0.1); }
+        .c-card i { font-size: 2rem; color: var(--naranja); }
+        .c-card h4 { margin: 0; color: var(--azul); font-size: 1.1rem; }
+        .c-card p { margin: 5px 0 0; color: #888; font-size: 0.9rem; }
+
+        /* FORMULARIO TICKET */
+        .ticket-form { background: white; padding: 40px; border-radius: 40px; border: 10px solid white; box-shadow: 0 25px 60px rgba(0,0,0,0.08); }
+        .ticket-form h2 { color: var(--azul); margin-top: 0; margin-bottom: 30px; }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-weight: 700; margin-bottom: 8px; color: var(--azul); font-size: 0.9rem; }
+        .input-group input, .input-group textarea { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #eee; font-family: 'Fredoka'; box-sizing: border-box; }
+        .btn-send { background: var(--fucsia); color: white; border: none; padding: 18px 40px; border-radius: 50px; font-weight: 800; cursor: pointer; width: 100%; transition: 0.3s; text-transform: uppercase; }
+        .btn-send:hover { background: var(--azul); transform: scale(1.02); }
+
+        /* --- FOOTER (CLON EXACTO) --- */
+        footer { background: #fff; padding: 80px 10% 40px 10%; border-top: 5px solid var(--azul); position: relative; }
+        .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 40px; margin-bottom: 60px; }
+        .footer-col h4 { color: var(--azul); font-size: 1.2rem; margin-bottom: 25px; font-weight: 800; text-transform: uppercase; }
+        .footer-col p { color: #666; line-height: 1.6; font-size: 0.95rem; }
+        .footer-col ul { list-style: none; padding: 0; }
+        .footer-col ul li { margin-bottom: 15px; }
+        .footer-col ul li a { text-decoration: none; color: #666; font-weight: 600; transition: 0.3s; font-size: 0.95rem; }
+        .footer-bottom { border-top: 1px solid #eee; padding-top: 30px; text-align: center; color: #aaa; font-size: 0.85rem; font-weight: 600; }
+
+        @media (max-width: 1100px) {
+            .menu-toggle { display: block; }
+            .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: white; padding: 30px; gap: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.1); border-bottom: 4px solid var(--azul); }
+            .nav-links.active { display: flex; }
+            .support-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .header-asesoria h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-master"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
+
+    <nav class="nav-bar">
+        <div class="nav-logo"><img src="https://i.imgur.com/igoZDSU.png"></div>
+        <button class="menu-toggle" id="menu-btn"><i class="fas fa-bars"></i></button>
+        <div class="nav-links" id="nav-menu">
+            <a href="inicio.html" class="nav-link">Inicio</a>
+            <a href="servicios.html" class="nav-link">Servicios</a>
+            <div class="dropdown">
+                <a href="#" class="nav-link">Campus <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i></a>
+                <div class="dropdown-content">
+                    <a href="misprimerospasitos.html">Sede Guayas y Pichincha</a>
+                    <a href="pasitosdeamor.html">Sede Ciudadela de los Ingenieros</a>
+                </div>
+            </div>
+            <a href="testimonios.html" class="nav-link">Testimonios</a>
+            <a href="asesoria.html" class="nav-link">Agenda tu cita</a>
+            <a href="matriculate.html" class="btn-nav-matricula">MATRICÚLATE</a>
+            <div class="nav-socials">
+                <a href="https://www.facebook.com/MisPrimerosPasitosCuenca/"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/primerospasitos_cuenca/"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.tiktok.com/@pasitosdeamor_educuenca?_r=1&_t=ZS-94dDT25bFsF"><i class="fab fa-tiktok"></i></a>
+                <a href="https://wa.link/yp2w5d"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="header-asesoria animate__animated animate__fadeIn">
+            <h1>Estamos para <span style="color: var(--turquesa);">Ayudarte</span></h1>
+            <p>Resuelve tus dudas o envíanos un mensaje directo.</p>
+        </div>
+
+        <div class="faq-container" id="faq-list">
+            </div>
+
+        <div class="support-grid">
+            <div class="contact-info-cards animate__animated animate__fadeInLeft">
+                <a href="https://wa.link/yp2w5d" class="c-card">
+                    <i class="fab fa-whatsapp"></i>
+                    <div>
+                        <h4>WhatsApp Directo</h4>
+                        <p>Respuesta inmediata de nuestro equipo.</p>
+                    </div>
+                </a>
+                <a href="tel:+593999999999" class="c-card">
+                    <i class="fas fa-phone-alt"></i>
+                    <div>
+                        <h4>Llamada Telefónica</h4>
+                        <p>Atención de Lunes a Viernes (08:00 - 16:00)</p>
+                    </div>
+                </a>
+                <div class="c-card">
+                    <i class="fas fa-envelope-open-text"></i>
+                    <div>
+                        <h4>Email Institucional</h4>
+                        <p>info@centroinicial.edu.ec</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ticket-form animate__animated animate__fadeInRight">
+                <h2>Envía una Inquietud</h2>
+                <form id="formTicket">
+                    <div class="input-group">
+                        <label>Nombre Completo</label>
+                        <input type="text" id="nombrePapa" required placeholder="Tu nombre">
+                    </div>
+                    <div class="input-group">
+                        <label>Correo Electrónico</label>
+                        <input type="email" id="correoPapa" required placeholder="ejemplo@correo.com">
+                    </div>
+                    <div class="input-group">
+                        <label>Asunto</label>
+                        <select id="asuntoTicket" style="width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #eee; font-family: 'Fredoka';">
+                            <option value="General">Consulta General</option>
+                            <option value="Costos">Información de Costos</option>
+                            <option value="Cita">Problema con mi Cita</option>
+                            <option value="Sugerencia">Sugerencia</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Tu mensaje</label>
+                        <textarea id="mensajeTicket" rows="4" required placeholder="Escribe aquí tu duda..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-send">Enviar Ticket</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <img src="https://i.imgur.com/igoZDSU.png" style="height: 60px; margin-bottom: 20px;">
+                <p>Brindamos una educación de élite basada en el amor, la seguridad y el desarrollo creativo de los más pequeños. Tu confianza, nuestro mayor compromiso.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Sedes</h4>
+                <ul>
+                    <li><a href="pasitosdeamor.html">Sede Ciudadela de Los Ingenieros</a></li>
+                    <li><a href="misprimerospasitos.html">Sede Guayas y Pichincha</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Enlaces</h4>
+                <ul>
+                    <li><a href="inicio.html">Inicio</a></li>
+                    <li><a href="servicios.html">Servicios</a></li>
+                    <li><a href="testimonios.html">Testimonios</a></li>
+                    <li><a href="asesoria.html">Agenda tu cita</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <p><i class="fas fa-map-marker-alt" style="color:var(--fucsia);"></i> Cuenca, Ecuador</p>
+                <p><i class="fas fa-phone" style="color:var(--fucsia);"></i> +593 98 319 7824</p>
+            </div>
+        </div>
+        <div class="footer-bottom">© 2026 PASITOS. TODOS LOS DERECHOS RESERVADOS. <br> DISEÑADO POR SOCIAL MEDIA STUDIO.</div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC8E7wan17X4fd_t30HlE71f7w95p3V7X8",
+            authDomain: "pasitos-web.firebaseapp.com",
+            projectId: "pasitos-web",
+            storageBucket: "pasitos-web.firebasestorage.app",
+            messagingSenderId: "516945617009",
+            appId: "1:516945617009:web:67a0c3dd4e2ed4ce207bd0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // CARGAR PREGUNTAS FRECUENTES (Firestore: faq_escuela -> pregunta, respuesta)
+        async function cargarFaq() {
+            const snap = await getDocs(collection(db, "faq_escuela"));
+            const container = document.getElementById('faq-list');
+            snap.forEach(d => {
+                const data = d.data();
+                container.innerHTML += `
+                    <div class="faq-item" onclick="this.classList.toggle('active')">
+                        <div class="faq-question">
+                            ${data.pregunta}
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">${data.respuesta}</div>
+                    </div>`;
+            });
+        }
+        cargarFaq();
+
+        // ENVIAR TICKET
+        document.getElementById('formTicket').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                nombre: document.getElementById('nombrePapa').value,
+                email: document.getElementById('correoPapa').value,
+                asunto: document.getElementById('asuntoTicket').value,
+                mensaje: document.getElementById('mensajeTicket').value,
+                fecha: new Date(),
+                estado: "Nuevo"
+            };
+
+            try {
+                await addDoc(collection(db, "tickets_soporte"), data);
+                alert("¡Ticket enviado! Nos pondremos en contacto contigo pronto.");
+                e.target.reset();
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        // LÓGICA MENÚ MÓVIL
+        const menuBtn = document.getElementById('menu-btn');
+        const navMenu = document.getElementById('nav-menu');
+        menuBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            menuBtn.querySelector('i').classList.toggle('fa-bars');
+            menuBtn.querySelector('i').classList.toggle('fa-times');
+        });
+    </script>
+</body>
+</html>

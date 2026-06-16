@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicios | Mis Primeros Pasitos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    
+    <style>
+        :root {
+            --azul: #004D95; --celeste: #8BC8D1; --turquesa: #009BB4;
+            --verde: #D1E000; --fucsia: #E5007D; --naranja: #F58220;
+            --gris: #3C3C3B; --blanco: #ffffff;
+            --plyr-color-main: var(--naranja);
+        }
+
+        body, html { margin: 0; padding: 0; font-family: 'Fredoka', sans-serif; color: var(--gris); overflow-x: hidden; scroll-behavior: smooth; }
+
+        /* --- FONDO DINÁMICO --- */
+        .bg-master { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: linear-gradient(180deg, #f0f8fa 0%, #ffffff 100%); }
+        .bg-master::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(var(--celeste) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.15; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(100px); animation: float 20s infinite alternate; opacity: 0.3; }
+        .blob-1 { top: -5%; right: -5%; width: 600px; height: 600px; background: var(--celeste); }
+        .blob-2 { bottom: 5%; left: -5%; width: 500px; height: 500px; background: var(--verde); }
+        @keyframes float { from { transform: translate(0,0); } to { transform: translate(60px, 40px); } }
+
+        /* --- NAVEGACIÓN --- */
+        .nav-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 5%; position: fixed; top: 0; width: 100%; box-sizing: border-box; z-index: 2000; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-bottom: 4px solid var(--azul); }
+        .nav-logo img { height: 75px; }
+        .nav-links { display: flex; gap: 25px; align-items: center; }
+        .nav-link { text-decoration: none; color: var(--azul); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; transition: 0.3s; }
+        .nav-link:hover, .dropdown:hover > .nav-link { color: var(--fucsia); }
+        
+        .dropdown { position: relative; }
+        .dropdown-content { display: none; position: absolute; background: white; min-width: 250px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-radius: 15px; overflow: hidden; top: 100%; left: 0; border-top: 5px solid var(--naranja); }
+        .dropdown-content a { color: var(--azul); padding: 15px 20px; text-decoration: none; display: block; font-size: 0.85rem; font-weight: 700; transition: 0.3s; }
+        .dropdown-content a:hover { background: var(--celeste); color: white; }
+        .dropdown:hover .dropdown-content { display: block; }
+
+        .nav-socials { display: flex; gap: 12px; align-items: center; border-left: 2px solid #ddd; padding-left: 15px; }
+        .nav-socials a { color: var(--azul); font-size: 1.2rem; transition: 0.3s; }
+        .nav-socials a:hover { color: var(--fucsia); transform: scale(1.2); }
+        .btn-nav-matricula { background: var(--naranja); color: white !important; padding: 10px 20px; border-radius: 50px; font-weight: 800; text-decoration: none; font-size: 0.8rem; }
+
+        /* BOTÓN HAMBURGUESA */
+        .menu-toggle { display: none; background: none; border: none; color: var(--azul); font-size: 1.8rem; cursor: pointer; }
+
+        /* --- ESTRUCTURA DE SERVICIOS --- */
+        .main-container { padding: 160px 10% 80px 10%; }
+        .services-intro { text-align: center; margin-bottom: 80px; }
+        .services-intro h1 { font-size: 4rem; color: var(--azul); margin: 0; font-weight: 700; line-height: 1; }
+        .services-intro p { font-size: 1.3rem; color: #555; margin-top: 20px; }
+
+        .service-group { margin-bottom: 100px; }
+        .group-title { font-size: 2.5rem; color: var(--azul); margin-bottom: 40px; border-left: 12px solid var(--naranja); padding-left: 25px; text-transform: uppercase; font-weight: 700; }
+
+        /* TARJETAS DE VIDEO SMS STYLE */
+        .video-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+        .video-card { background: white; border-radius: 35px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.06); border: 1px solid #eee; transition: 0.4s; }
+        .video-card:hover { transform: translateY(-10px); box-shadow: 0 30px 60px rgba(0,0,0,0.1); }
+        
+        .video-container { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; }
+        .video-info { padding: 30px; }
+        .video-info h3 { font-size: 1.8rem; color: var(--azul); margin: 0 0 10px 0; font-weight: 700; }
+        .video-info p { font-size: 1rem; color: #666; line-height: 1.6; margin: 0; }
+
+        /* ALIMENTACIÓN PENDIENTE */
+        .alimentacion-box { background: var(--azul); border-radius: 40px; padding: 60px; color: white; text-align: center; }
+        .alimentacion-box i { font-size: 4rem; color: var(--verde); margin-bottom: 20px; }
+
+        /* --- FOOTER --- */
+        footer { background: #fff; padding: 80px 10% 40px 10%; border-top: 5px solid var(--azul); position: relative; }
+        .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 40px; margin-bottom: 60px; }
+        .footer-col h4 { color: var(--azul); font-size: 1.2rem; margin-bottom: 25px; font-weight: 800; text-transform: uppercase; }
+        .footer-col p { color: #666; line-height: 1.6; font-size: 0.95rem; }
+        .footer-col ul { list-style: none; padding: 0; }
+        .footer-col ul li { margin-bottom: 15px; }
+        .footer-col ul li a { text-decoration: none; color: #666; font-weight: 600; transition: 0.3s; font-size: 0.95rem; }
+        .footer-col ul li a:hover { color: var(--fucsia); padding-left: 10px; }
+        .footer-socials { display: flex; gap: 15px; margin-top: 20px; }
+        .footer-socials a { width: 40px; height: 40px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--azul); font-size: 1.2rem; transition: 0.4s; }
+        .footer-socials a:hover { background: var(--azul); color: #fff; transform: translateY(-5px); }
+        .footer-bottom { border-top: 1px solid #eee; padding-top: 30px; text-align: center; color: #aaa; font-size: 0.85rem; font-weight: 600; }
+
+        /* --- RESPONSIVE ADJUSTMENTS --- */
+        @media (max-width: 1100px) {
+            .menu-toggle { display: block; }
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: white;
+                padding: 30px;
+                gap: 20px;
+                box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+                border-bottom: 4px solid var(--azul);
+            }
+            .nav-links.active { display: flex; }
+            .nav-socials { border-left: none; padding-left: 0; justify-content: center; width: 100%; }
+            .dropdown-content { position: static; box-shadow: none; border-top: none; padding-left: 15px; }
+            
+            .main-container { padding: 120px 5% 40px; }
+            .video-grid { grid-template-columns: 1fr; gap: 25px; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .services-intro h1 { font-size: 2.8rem; }
+            .group-title { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-master"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
+
+    <nav class="nav-bar">
+        <div class="nav-logo"><img src="https://i.imgur.com/igoZDSU.png"></div>
+        
+        <button class="menu-toggle" id="menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="nav-links" id="nav-menu">
+            <a href="inicio.html" class="nav-link">Inicio</a>
+            <a href="servicios.html" class="nav-link">Servicios</a>
+            <div class="dropdown">
+                <a href="#" class="nav-link">Campus <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i></a>
+                <div class="dropdown-content">
+                    <a href="misprimerospasitos.html">Sede Guayas y Pichincha</a>
+                    <a href="pasitosdeamor.html">Sede Ciudadela de los Ingenieros</a>
+                </div>
+            </div>
+            <a href="testimonios.html" class="nav-link">Testimonios</a>
+            <a href="asesoria.html" class="nav-link">Agenda tu cita</a>
+            <a href="matriculate.html" class="btn-nav-matricula">MATRICÚLATE</a>
+            <div class="nav-socials">
+                <a href="https://www.facebook.com/MisPrimerosPasitosCuenca/"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/primerospasitos_cuenca/"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.tiktok.com/@pasitosdeamor_educuenca?_r=1&_t=ZS-94dDT25bFsF"><i class="fab fa-tiktok"></i></a>
+                <a href="https://wa.link/yp2w5d"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="services-intro animate__animated animate__fadeIn">
+            <h1>Nuestros <span style="color: var(--fucsia);">Servicios</span></h1>
+            <p>Descubre todo lo que hemos preparado para el crecimiento integral de tu hijo.</p>
+        </div>
+
+        <section class="service-group">
+            <h2 class="group-title">Modelo Educativo</h2>
+            <div class="video-grid" id="container-modelo"></div>
+        </section>
+
+        <section class="service-group">
+            <h2 class="group-title">Nuestros Talleres</h2>
+            <div class="video-grid" id="container-talleres"></div>
+        </section>
+
+        <section class="service-group">
+            <h2 class="group-title">Alimentación</h2>
+            <div class="alimentacion-box animate__animated animate__pulse animate__infinite">
+                <i class="fas fa-apple-alt"></i>
+                <h3>¡Muy Pronto!</h3>
+                <p>Estamos diseñando una sección especial para mostrarte nuestro menú y nutrición élite.</p>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <img src="https://i.imgur.com/igoZDSU.png" style="height: 60px; margin-bottom: 20px;">
+                <p>Brindamos una educación de élite basada en el amor, la seguridad y el desarrollo creativo de los más pequeños. Tu confianza, nuestro mayor compromiso.</p>
+                <div class="footer-socials">
+                    <a href="https://www.facebook.com/MisPrimerosPasitosCuenca/"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.tiktok.com/@pasitosdeamor_educuenca?_r=1&_t=ZS-94dDT25bFsF"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://www.instagram.com/primerospasitos_cuenca/"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.link/yp2w5d"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Sedes</h4>
+                <ul>
+                    <li><a href="pasitosdeamor.html">Sede Ciudadela de Los Ingenieros</a></li>
+                    <li><a href="misprimerospasitos.html">Sede Guayas y Pichincha</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Enlaces</h4>
+                <ul>
+                    <li><a href="inicio.html">Inicio</a></li>
+                    <li><a href="servicios.html">Servicios</a></li>
+                    <li><a href="testimonios.html">Testimonios</a></li>
+                    <li><a href="asesoria.html">Agenda tu cita</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <p><i class="fas fa-map-marker-alt" style="color:var(--fucsia);"></i> Cuenca, Ecuador</p>
+                <p><i class="fas fa-phone" style="color:var(--fucsia);"></i> +593 98 317 7824</p>
+                <p><i class="fas fa-envelope" style="color:var(--fucsia);"></i> cdi.primerospasitos@gmail.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 PASITOS. TODOS LOS DERECHOS RESERVADOS. <br>
+            DISEÑADO POR SOCIAL MEDIA STUDIO.
+        </div>
+    </footer>
+
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+
+    <script>
+        const menuBtn = document.getElementById('menu-btn');
+        const navMenu = document.getElementById('nav-menu');
+
+        menuBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            const icon = menuBtn.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC8E7wan17X4fd_t30HlE71f7w95p3V7X8",
+            authDomain: "pasitos-web.firebaseapp.com",
+            projectId: "pasitos-web",
+            storageBucket: "pasitos-web.firebasestorage.app",
+            messagingSenderId: "516945617009",
+            appId: "1:516945617009:web:67a0c3dd4e2ed4ce207bd0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function renderizarServicios(colName, containerId) {
+            const querySnapshot = await getDocs(collection(db, colName));
+            const container = document.getElementById(containerId);
+            
+            querySnapshot.forEach((doc) => {
+                const item = doc.data();
+                const videoUrl = item.url.includes("player.vimeo.com")
+    ? item.url
+    : `https://player.vimeo.com/video/${item.url}`;
+
+const card = `
+    <div class="video-card">
+        <div class="video-container">
+            <iframe
+                src="${videoUrl}"
+                width="100%"
+                height="100%"
+                frameborder="0"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowfullscreen
+                style="border:none;width:100%;height:100%;">
+            </iframe>
+        </div>
+        <div class="video-info">
+            <h3>${item.titulo}</h3>
+            <p>${item.descripcion}</p>
+        </div>
+    </div>
+`;
+                container.innerHTML += card;
+            });
+
+            
+        }
+
+        renderizarServicios('modeloEducativo', 'container-modelo');
+        renderizarServicios('talleres', 'container-talleres');
+    </script>
+</body>
+</html>

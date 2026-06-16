@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrícula | Mis Primeros Pasitos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <style>
+        :root {
+            --azul: #004D95; --celeste: #8BC8D1; --turquesa: #009BB4;
+            --verde: #D1E000; --fucsia: #E5007D; --naranja: #F58220;
+            --gris: #3C3C3B; --blanco: #ffffff;
+        }
+
+        body, html { margin: 0; padding: 0; font-family: 'Fredoka', sans-serif; color: var(--gris); overflow-x: hidden; scroll-behavior: smooth; }
+
+        /* --- FONDO DINÁMICO (COPIA EXACTA DE SERVICIOS) --- */
+        .bg-master { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: linear-gradient(180deg, #f0f8fa 0%, #ffffff 100%); }
+        .bg-master::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(var(--celeste) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.15; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(100px); animation: float 20s infinite alternate; opacity: 0.3; }
+        .blob-1 { top: -5%; right: -5%; width: 600px; height: 600px; background: var(--celeste); }
+        .blob-2 { bottom: 5%; left: -5%; width: 500px; height: 500px; background: var(--verde); }
+        @keyframes float { from { transform: translate(0,0); } to { transform: translate(60px, 40px); } }
+
+        /* --- NAVEGACIÓN --- */
+        .nav-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 5%; position: fixed; top: 0; width: 100%; box-sizing: border-box; z-index: 2000; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-bottom: 4px solid var(--azul); }
+        .nav-logo img { height: 75px; }
+        .nav-links { display: flex; gap: 25px; align-items: center; }
+        .nav-link { text-decoration: none; color: var(--azul); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; transition: 0.3s; }
+        .nav-link:hover, .dropdown:hover > .nav-link { color: var(--fucsia); }
+        
+        .dropdown { position: relative; }
+        .dropdown-content { display: none; position: absolute; background: white; min-width: 250px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-radius: 15px; overflow: hidden; top: 100%; left: 0; border-top: 5px solid var(--naranja); }
+        .dropdown-content a { color: var(--azul); padding: 15px 20px; text-decoration: none; display: block; font-size: 0.85rem; font-weight: 700; transition: 0.3s; }
+        .dropdown-content a:hover { background: var(--celeste); color: white; }
+        .dropdown:hover .dropdown-content { display: block; }
+
+        .nav-socials { display: flex; gap: 12px; align-items: center; border-left: 2px solid #ddd; padding-left: 15px; }
+        .nav-socials a { color: var(--azul); font-size: 1.2rem; transition: 0.3s; }
+        .nav-socials a:hover { color: var(--fucsia); transform: scale(1.2); }
+        .btn-nav-matricula { background: var(--naranja); color: white !important; padding: 10px 20px; border-radius: 50px; font-weight: 800; text-decoration: none; font-size: 0.8rem; }
+
+        /* BOTÓN HAMBURGUESA */
+        .menu-toggle { display: none; background: none; border: none; color: var(--azul); font-size: 1.8rem; cursor: pointer; }
+
+        /* --- CONTENEDOR DE MATRÍCULA --- */
+        .matricula-wrapper { padding: 160px 10% 80px 10%; display: flex; flex-direction: column; align-items: center; }
+        .matricula-card { background: white; width: 100%; max-width: 900px; border-radius: 40px; padding: 40px; box-shadow: 0 25px 70px rgba(0,0,0,0.1); border: 1px solid #eee; }
+        .matricula-card h1 { color: var(--azul); font-size: 2.5rem; text-align: center; margin: 0 0 10px 0; font-weight: 700; }
+        .subtitle { text-align: center; color: #777; margin-bottom: 40px; font-weight: 600; display: block; }
+
+        .selector-label { display: block; font-weight: 700; color: var(--azul); margin-bottom: 15px; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px; }
+        .mini-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 35px; }
+        .mini-card { border: 2px solid #f0f0f0; padding: 15px 10px; border-radius: 20px; text-align: center; cursor: pointer; transition: 0.3s; font-weight: 700; font-size: 0.85rem; color: var(--azul); display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .mini-card i { font-size: 1.5rem; color: var(--celeste); }
+        .mini-card:hover { border-color: var(--celeste); background: #f9ffff; }
+        .mini-card.selected { border-color: var(--fucsia); background: var(--fucsia); color: white; }
+        .mini-card.selected i { color: white; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
+        .input-box { margin-bottom: 15px; }
+        .input-box label { display: block; margin-bottom: 8px; font-weight: 700; color: var(--azul); font-size: 0.85rem; }
+        input, select { width: 100%; padding: 14px; border-radius: 15px; border: 2px solid #eee; font-family: 'Fredoka'; font-size: 1rem; box-sizing: border-box; transition: 0.3s; }
+        input:focus { border-color: var(--turquesa); outline: none; }
+
+        .dateTime-section { background: #f8fbfc; padding: 25px; border-radius: 30px; border: 2px dashed var(--celeste); margin-top: 20px; }
+        .status-msg { font-size: 0.8rem; font-weight: 700; margin-top: 5px; display: none; }
+
+        .btn-submit { width: 100%; background: var(--naranja); color: white; border: none; padding: 20px; border-radius: 50px; font-weight: 800; font-size: 1.1rem; cursor: pointer; margin-top: 30px; transition: 0.4s; text-transform: uppercase; }
+        .btn-submit:hover { background: var(--azul); transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,77,149,0.3); }
+
+        /* --- FOOTER --- */
+        footer { background: #fff; padding: 80px 10% 40px 10%; border-top: 5px solid var(--azul); position: relative; }
+        .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 40px; margin-bottom: 60px; }
+        .footer-col h4 { color: var(--azul); font-size: 1.2rem; margin-bottom: 25px; font-weight: 800; text-transform: uppercase; }
+        .footer-col p { color: #666; line-height: 1.6; font-size: 0.95rem; }
+        .footer-col ul { list-style: none; padding: 0; }
+        .footer-col ul li { margin-bottom: 15px; }
+        .footer-col ul li a { text-decoration: none; color: #666; font-weight: 600; transition: 0.3s; font-size: 0.95rem; }
+        .footer-col ul li a:hover { color: var(--fucsia); padding-left: 10px; }
+        .footer-socials { display: flex; gap: 15px; margin-top: 20px; }
+        .footer-socials a { width: 40px; height: 40px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--azul); font-size: 1.2rem; transition: 0.4s; }
+        .footer-socials a:hover { background: var(--azul); color: #fff; transform: translateY(-5px); }
+        .footer-bottom { border-top: 1px solid #eee; padding-top: 30px; text-align: center; color: #aaa; font-size: 0.85rem; font-weight: 600; }
+
+        /* --- RESPONSIVE ADJUSTMENTS --- */
+        @media (max-width: 1100px) {
+            .menu-toggle { display: block; }
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: white;
+                padding: 30px;
+                gap: 20px;
+                box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+                border-bottom: 4px solid var(--azul);
+            }
+            .nav-links.active { display: flex; }
+            .nav-socials { border-left: none; padding-left: 0; justify-content: center; width: 100%; }
+            .dropdown-content { position: static; box-shadow: none; border-top: none; padding-left: 15px; }
+            
+            .matricula-wrapper { padding: 120px 5% 40px; }
+            .mini-grid { grid-template-columns: repeat(2, 1fr); }
+            .form-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .matricula-card h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-master"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
+
+    <nav class="nav-bar">
+        <div class="nav-logo"><img src="https://i.imgur.com/igoZDSU.png"></div>
+        
+        <button class="menu-toggle" id="menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="nav-links" id="nav-menu">
+            <a href="inicio.html" class="nav-link">Inicio</a>
+            <a href="servicios.html" class="nav-link">Servicios</a>
+            <div class="dropdown">
+                <a href="#" class="nav-link">Campus <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i></a>
+                <div class="dropdown-content">
+                    <a href="misprimerospasitos.html">Sede Guayas y Pichincha</a>
+                    <a href="pasitosdeamor.html">Sede Ciudadela de los Ingenieros</a>
+                </div>
+            </div>
+            <a href="testimonios.html" class="nav-link">Testimonios</a>
+            <a href="asesoria.html" class="nav-link">Agenda tu cita</a>
+            <a href="matriculate.html" class="btn-nav-matricula">MATRICÚLATE</a>
+            <div class="nav-socials">
+                <a href="https://www.facebook.com/MisPrimerosPasitosCuenca/"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/primerospasitos_cuenca/"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.tiktok.com/@pasitosdeamor_educuenca?_r=1&_t=ZS-94dDT25bFsF"><i class="fab fa-tiktok"></i></a>
+                <a href="https://wa.link/yp2w5d"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="matricula-wrapper">
+        <div class="matricula-card animate__animated animate__fadeInUp">
+            <h1>Inicia la Aventura</h1>
+            <span class="subtitle">Completa los datos para agendar tu visita guiada</span>
+
+            <form id="formMatricula">
+
+		<span class="selector-label">1. Selecciona la Sede</span>
+                <div class="mini-grid" style="grid-template-columns: 1fr 1fr;">
+                    <div class="mini-card" onclick="setVal('sede', 'Guayas y Pichincha', this)"><i class="fas fa-map-marker-alt"></i>Guayas y Pichincha</div>
+                    <div class="mini-card" onclick="setVal('sede', 'Cdla. Ingenieros', this)"><i class="fas fa-school"></i>Cdla. de los Ingenieros</div>
+                </div>
+
+                <span class="selector-label">2. Selecciona el Nivel Educativo</span>
+                <div class="mini-grid">
+                    <div class="mini-card" onclick="setVal('nivel', 'Maternidad', this)"><i class="fas fa-baby"></i>Maternidad</div>
+                    <div class="mini-card" onclick="setVal('nivel', 'Pre-Inicial', this)"><i class="fas fa-child"></i>Pre-Inicial</div>
+                    <div class="mini-card" onclick="setVal('nivel', 'Inicial 1', this)"><i class="fas fa-shapes"></i>Inicial 1</div>
+                    <div class="mini-card" onclick="setVal('nivel', 'Inicial 2', this)"><i class="fas fa-graduation-cap"></i>Inicial 2</div>
+                </div>
+
+                <span class="selector-label">3. Datos del Representante y Estudiante</span>
+                <div class="form-grid">
+                    <div class="input-box"><label>Nombre del Representante</label><input type="text" id="nombreRep" required placeholder="Ej: Juan Pérez"></div>
+                    <div class="input-box"><label>Nombre del Estudiante</label><input type="text" id="nombreEst" required placeholder="Nombre del niño/a"></div>
+                    <div class="input-box"><label>Teléfono WhatsApp</label><input type="tel" id="whatsapp" required placeholder="0999999999"></div>
+                    <div class="input-box"><label>Correo Electrónico</label><input type="email" id="email" required placeholder="ejemplo@gmail.com"></div>
+                </div>
+
+                <span class="selector-label">4. Agenda tu Visita Guiada</span>
+                <div class="dateTime-section">
+                    <div class="form-grid" style="margin-top:0;">
+                        <div class="input-box">
+                            <label>Fecha de Visita</label>
+                            <input type="date" id="fechaCita" required onchange="checkAvailability()">
+                        </div>
+                        <div class="input-box">
+                            <label>Hora de Visita</label>
+                            <select id="horaCita" required onchange="checkAvailability()">
+                                <option value="">Selecciona una hora</option>
+                                <option value="09:00">09:00 AM</option>
+                                <option value="10:00">10:00 AM</option>
+                                <option value="11:00">11:00 AM</option>
+                                <option value="15:00">03:00 PM</option>
+                                <option value="16:00">04:00 PM</option>
+                            </select>
+                            <div id="statusMsg" class="status-msg"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="btnSubmit">Agendar y Solicitar Matrícula</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <img src="https://i.imgur.com/igoZDSU.png" style="height: 60px; margin-bottom: 20px;">
+                <p>Brindamos una educación de élite basada en el amor, la seguridad y el desarrollo creativo de los más pequeños. Tu confianza, nuestro mayor compromiso.</p>
+                <div class="footer-socials">
+                    <a href="https://www.facebook.com/MisPrimerosPasitosCuenca/"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.tiktok.com/@pasitosdeamor_educuenca?_r=1&_t=ZS-94dDT25bFsF"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://www.instagram.com/primerospasitos_cuenca/"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.link/yp2w5d"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Sedes</h4>
+                <ul>
+                    <li><a href="pasitosdeamor.html">Sede Ciudadela de Los Ingenieros</a></li>
+                    <li><a href="misprimerospasitos.html">Sede Guayas y Pichincha</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Enlaces</h4>
+                <ul>
+                    <li><a href="inicio.html">Inicio</a></li>
+                    <li><a href="servicios.html">Servicios</a></li>
+                    <li><a href="testimonios.html">Testimonios</a></li>
+                    <li><a href="asesoria.html">Agenda tu cita</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <p><i class="fas fa-map-marker-alt" style="color:var(--fucsia);"></i> Cuenca, Ecuador</p>
+                <p><i class="fas fa-phone" style="color:var(--fucsia);"></i> +593 98 319 7824</p>
+                <p><i class="fas fa-envelope" style="color:var(--fucsia);"></i> cdi.primerospasitos@gmail.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 PASITOS. TODOS LOS DERECHOS RESERVADOS. <br>
+            DISEÑADO POR SOCIAL MEDIA STUDIO.
+        </div>
+    </footer>
+
+    <script>
+        const menuBtn = document.getElementById('menu-btn');
+        const navMenu = document.getElementById('nav-menu');
+
+        menuBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            const icon = menuBtn.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC8E7wan17X4fd_t30HlE71f7w95p3V7X8",
+            authDomain: "pasitos-web.firebaseapp.com",
+            projectId: "pasitos-web",
+            storageBucket: "pasitos-web.firebasestorage.app",
+            messagingSenderId: "516945617009",
+            appId: "1:516945617009:web:67a0c3dd4e2ed4ce207bd0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let selection = { nivel: '', sede: '' };
+
+        window.setVal = (key, val, el) => {
+            selection[key] = val;
+            const siblings = el.parentElement.querySelectorAll('.mini-card');
+            siblings.forEach(s => s.classList.remove('selected'));
+            el.classList.add('selected');
+        };
+
+        window.checkAvailability = async () => {
+            const fecha = document.getElementById('fechaCita').value;
+            const hora = document.getElementById('horaCita').value;
+            const statusMsg = document.getElementById('statusMsg');
+            const btn = document.getElementById('btnSubmit');
+
+            if (fecha && hora) {
+                const q = query(collection(db, "matriculas"), where("fechaCita", "==", fecha), where("horaCita", "==", hora));
+                const querySnapshot = await getDocs(q);
+
+                if (!querySnapshot.empty) {
+                    statusMsg.innerText = "❌ Esta hora ya está ocupada. Elige otra.";
+                    statusMsg.style.display = "block";
+                    statusMsg.style.color = "red";
+                    btn.disabled = true;
+                    btn.style.opacity = "0.5";
+                } else {
+                    statusMsg.innerText = "✅ Hora disponible.";
+                    statusMsg.style.display = "block";
+                    statusMsg.style.color = "green";
+                    btn.disabled = false;
+                    btn.style.opacity = "1";
+                }
+            }
+        };
+
+        document.getElementById('formMatricula').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(!selection.nivel || !selection.sede) return alert("Por favor selecciona Nivel y Sede.");
+
+            const data = {
+                nivel: selection.nivel,
+                sede: selection.sede,
+                representante: document.getElementById('nombreRep').value,
+                estudiante: document.getElementById('nombreEst').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                email: document.getElementById('email').value,
+                fechaCita: document.getElementById('fechaCita').value,
+                horaCita: document.getElementById('horaCita').value,
+                estado: "Pendiente",
+                timestamp: new Date()
+            };
+
+            try {
+                await addDoc(collection(db, "matriculas"), data);
+                alert("¡Cita agendada con éxito! Nos vemos pronto en Pasitos.");
+                window.location.href = "inicio.html";
+            } catch (err) {
+                console.error(err);
+            }
+        });
+    </script>
+</body>
+</html>

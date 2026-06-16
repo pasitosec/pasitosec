@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Admin | Mis Primeros Pasitos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --azul: #004D95; --celeste: #8BC8D1; --fucsia: #E5007D;
+            --naranja: #F58220; --verde: #D1E000; --gris-borde: #f0f0f0;
+        }
+
+        body, html { margin: 0; padding: 0; font-family: 'Fredoka', sans-serif; background: #ffffff; height: 100vh; overflow: hidden; }
+
+        /* --- LOGIN --- */
+        #login-overlay { position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center; background: #000; }
+        .collage { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); opacity: 0.6; filter: blur(5px); }
+        .collage img { width: 100%; height: 100%; object-fit: cover; }
+        .login-card { position: relative; background: rgba(255, 255, 255, 0.95); padding: 50px; border-radius: 40px; width: 380px; text-align: center; backdrop-filter: blur(15px); box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+        .login-card img { height: 50px; margin-bottom: 20px; }
+        .login-card input { width: 100%; padding: 18px; margin: 12px 0; border-radius: 20px; border: 2px solid #eee; box-sizing: border-box; outline: none; }
+
+        /* --- LAYOUT --- */
+        #admin-app { display: none; height: 100vh; grid-template-columns: 280px 1fr; }
+        .sidebar { background: #ffffff; padding: 40px 25px; display: flex; flex-direction: column; border-right: 1px solid var(--gris-borde); }
+        .sidebar img { height: 55px; margin-bottom: 40px; align-self: center; }
+        
+        .nav-btn { padding: 16px 20px; border-radius: 20px; cursor: pointer; margin-bottom: 8px; display: flex; align-items: center; gap: 15px; transition: 0.3s; font-weight: 600; color: #888; text-decoration: none; }
+        .nav-btn:hover { background: #f9f9f9; color: var(--azul); }
+        .nav-btn.active { background: #f0f7ff; color: var(--azul); border-right: 4px solid var(--naranja); border-radius: 20px 0 0 20px; }
+
+        .main { overflow-y: auto; padding: 50px; box-sizing: border-box; background: #ffffff; }
+
+        /* --- TABS & CARDS --- */
+        .tab-bar { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 30px; border-bottom: 1px solid #eee; }
+        .tab { background: #f8fafc; padding: 10px 20px; border-radius: 12px; cursor: pointer; white-space: nowrap; font-weight: 700; color: #64748b; transition: 0.3s; }
+        .tab.active { background: var(--azul); color: white; }
+
+        .card { background: white; border-radius: 25px; padding: 30px; border: 1px solid var(--gris-borde); margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px; align-items: flex-end; }
+        label { font-size: 0.75rem; font-weight: 800; color: var(--azul); margin-bottom: 8px; display: block; text-transform: uppercase; }
+        input, select { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #f0f0f0; font-family: 'Fredoka'; outline: none; box-sizing: border-box; }
+
+        /* --- GRID & ITEMS --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .item { border: 1px solid var(--gris-borde); border-radius: 20px; padding: 15px; position: relative; }
+        .item img { width: 100%; height: 140px; border-radius: 15px; object-fit: cover; margin-bottom: 10px; background: #f9f9f9; }
+        
+        /* CORRECCIÓN LINKS LARGOS */
+        .item h4 { margin: 0; color: var(--azul); font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: help; }
+        .item h4:hover::after { content: attr(title); position: absolute; background: #333; color: #fff; padding: 10px; border-radius: 8px; font-size: 0.75rem; white-space: normal; width: 200px; z-index: 10; bottom: 100%; left: 0; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+
+        .btn-edit { background: #f1f5f9; color: var(--azul); border: none; padding: 8px 15px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.75rem; transition: 0.2s; }
+        .btn-del { background: #fff1f2; color: #e11d48; border: none; padding: 8px 15px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.75rem; }
+        .btn-save { background: var(--azul); color: white; border: none; padding: 14px 25px; border-radius: 12px; font-weight: 800; cursor: pointer; }
+        .btn-check { background: #ecfdf5; color: #059669; border: none; padding: 8px 15px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.75rem; }
+
+        .btn-logout { margin-top: auto; padding: 15px; border-radius: 15px; background: #fff1f2; color: #e11d48; text-align: center; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        
+        .hidden { display: none !important; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid #eee; color: var(--azul); font-size: 0.85rem; }
+        td { padding: 12px; border-bottom: 1px solid #f9f9f9; font-size: 0.9rem; }
+        
+        .badge-pendiente { background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; }
+        .badge-realizada { background: #dcfce7; color: #16a34a; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+    <div id="login-overlay">
+        <div class="collage">
+            <img src="https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?q=80&w=400"><img src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?q=80&w=400">
+            <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=400"><img src="https://images.unsplash.com/photo-1516627145497-ae6968895b74?q=80&w=400">
+        </div>
+        <div class="login-card">
+            <img src="https://i.imgur.com/igoZDSU.png">
+            <input type="email" id="adm-email" placeholder="Usuario">
+            <input type="password" id="adm-pass" placeholder="Password">
+            <button class="btn-save" style="width:100%" onclick="doLogin()">ACCEDER</button>
+        </div>
+    </div>
+
+    <div id="admin-app">
+        <div class="sidebar">
+            <img src="https://i.imgur.com/igoZDSU.png">
+            <div class="nav-btn active" onclick="nav('citas', this)"><i class="fas fa-calendar-alt"></i> Citas Pendientes</div>
+            <div class="nav-btn" onclick="nav('realizadas', this)"><i class="fas fa-check-circle"></i> Citas Realizadas</div>
+            <div class="nav-btn" onclick="nav('web', this)"><i class="fas fa-edit"></i> Gestión Web</div>
+            <div class="nav-btn" onclick="nav('soporte', this)"><i class="fas fa-headset"></i> Soporte</div>
+            <div class="btn-logout" onclick="doLogout()">CERRAR SESIÓN</div>
+        </div>
+
+        <div class="main">
+            <div id="sec-citas" class="content">
+                <h2 style="color:var(--azul);">Citas de Matrícula <span class="badge-pendiente">PENDIENTES</span></h2>
+                <div class="card">
+                    <table>
+                        <thead><tr><th>FECHA</th><th>HORA</th><th>PADRE</th><th>SEDE</th><th>WHATSAPP</th><th>ACCIÓN</th></tr></thead>
+                        <tbody id="body-citas"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="sec-realizadas" class="content hidden">
+                <h2 style="color:var(--azul);">Historial <span class="badge-realizada">REALIZADAS</span></h2>
+                <div class="card">
+                    <table>
+                        <thead><tr><th>FECHA</th><th>HORA</th><th>PADRE</th><th>SEDE</th><th>ESTADO</th><th>ACCIÓN</th></tr></thead>
+                        <tbody id="body-realizadas"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="sec-web" class="content hidden">
+                <h2 style="color:var(--azul);">Edición de Contenido</h2>
+                <div class="tab-bar">
+                    <div class="tab active" onclick="tab('equiposede1', this, 'titulo', 'descripcion', 'url')">Equipo S1</div>
+                    <div class="tab" onclick="tab('equiposede2', this, 'titulo', 'descripcion', 'url')">Equipo S2</div>
+                    <div class="tab" onclick="tab('campussede1', this, 'titulo', 'descripcion', 'url')">Instalaciones S1</div>
+                    <div class="tab" onclick="tab('campussede2', this, 'titulo', 'descripcion', 'url')">Instalaciones S2</div>
+                    <div class="tab" onclick="tab('modeloEducativo', this, 'titulo', 'descripcion', 'url')">Modelo Educativo</div>
+                    <div class="tab" onclick="tab('talleres', this, 'titulo', 'descripcion', 'url')">Talleres</div>
+                    <div class="tab" onclick="tab('testimonios', this, 'nombre', 'frase', 'url')">Testimonios</div>
+                    <div class="tab" onclick="tab('galeria_padres', this, 'titulo', 'notauso', 'url')">Momentos Inolvidables</div>
+                    <div class="tab" onclick="tab('faq_escuela', this, 'pregunta', 'respuesta', 'notauso')">FAQ</div>
+                    <div class="tab" onclick="tab('recursos', this, 'maps', 'videoubi', 'url')">Recursos</div>
+                </div>
+
+                <div class="card">
+                    <div class="form-row">
+                        <input type="hidden" id="edit-id">
+                        <div><label id="l1">CAMPO 1</label><input type="text" id="v1"></div>
+                        <div><label id="l2">CAMPO 2</label><input type="text" id="v2"></div>
+                        <div><label id="l3">URL / LINK</label><input type="text" id="v3"></div>
+                        <button class="btn-save" onclick="handleSave()" id="btn-save">GUARDAR</button>
+                    </div>
+                </div>
+                <div id="grid-web" class="grid"></div>
+            </div>
+
+            <div id="sec-soporte" class="content hidden">
+                <h2 style="color:var(--azul);">Tickets de Soporte</h2>
+                <div id="body-soporte"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC8E7wan17X4fd_t30HlE71f7w95p3V7X8",
+            authDomain: "pasitos-web.firebaseapp.com",
+            projectId: "pasitos-web",
+            storageBucket: "pasitos-web.firebasestorage.app",
+            messagingSenderId: "516945617009",
+            appId: "1:516945617009:web:67a0c3dd4e2ed4ce207bd0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let curColl = "equiposede1", f1="titulo", f2="descripcion", f3="url";
+
+        window.doLogin = () => {
+            const email = document.getElementById('adm-email').value;
+            const pass = document.getElementById('adm-pass').value;
+            signInWithEmailAndPassword(auth, email, pass).catch(() => alert("Credenciales incorrectas"));
+        };
+        window.doLogout = () => signOut(auth).then(() => location.reload());
+
+        onAuthStateChanged(auth, user => {
+            if(user) {
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('admin-app').style.display = 'grid';
+                initRealtime();
+            }
+        });
+
+        window.nav = (id, btn) => {
+            document.querySelectorAll('.content').forEach(s => s.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('sec-'+id).classList.remove('hidden');
+            btn.classList.add('active');
+        };
+
+        window.tab = (coll, btn, k1, k2, k3) => {
+            curColl = coll; f1=k1; f2=k2; f3=k3;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('l1').innerText = k1.toUpperCase();
+            document.getElementById('l2').innerText = k2.toUpperCase();
+            document.getElementById('l3').innerText = k3.toUpperCase();
+            document.getElementById('edit-id').value = "";
+            document.getElementById('btn-save').innerText = "GUARDAR";
+            loadGrid();
+        };
+
+        function initRealtime() {
+            onSnapshot(query(collection(db, "matriculas"), orderBy("timestamp", "desc")), s => {
+                const bPend = document.getElementById('body-citas');
+                const bReal = document.getElementById('body-realizadas');
+                bPend.innerHTML = ""; bReal.innerHTML = "";
+                
+                s.forEach(d => {
+                    const c = d.data();
+                    const id = d.id;
+                    const estado = c.estado || "Pendiente";
+                    
+                    const row = `<tr>
+                        <td>${c.fechaCita}</td>
+                        <td>${c.horaCita}</td>
+                        <td>${c.representante}</td>
+                        <td>${c.sede}</td>
+                        ${estado === "Pendiente" 
+                            ? `<td><a href="https://wa.me/${c.whatsapp}" target="_blank" style="color:var(--naranja); font-weight:700;">${c.whatsapp}</a></td>
+                               <td><button class="btn-check" onclick="cambiarEstadoCita('${id}', 'Realizada')">✓ FINALIZAR</button></td>`
+                            : `<td><span class="badge-realizada">COMPLETADA</span></td>
+                               <td><button class="btn-edit" onclick="cambiarEstadoCita('${id}', 'Pendiente')">↩ REABRIR</button></td>`
+                        }
+                    </tr>`;
+                    if(estado === "Pendiente") bPend.innerHTML += row;
+                    else bReal.innerHTML += row;
+                });
+            });
+
+            onSnapshot(query(collection(db, "tickets_soporte"), orderBy("fecha", "desc")), s => {
+                const b = document.getElementById('body-soporte'); b.innerHTML = "";
+                s.forEach(d => {
+                    const t = d.data();
+                    b.innerHTML += `
+                        <div class="card">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <strong>${t.nombre} - <span style="color:var(--fucsia)">${t.asunto}</span></strong>
+                                <small>${t.email}</small>
+                            </div>
+                            <p style="color:#555; margin:15px 0;">${t.mensaje}</p>
+                            <div style="display:flex; gap:10px;">
+                                <a href="mailto:${t.email}" class="btn-edit" style="text-decoration:none;">RESPONDER</a>
+                                <button class="btn-del" onclick="deleteTicket('${d.id}')">BORRAR</button>
+                            </div>
+                        </div>`;
+                });
+            });
+            loadGrid();
+        }
+
+        window.cambiarEstadoCita = async (id, nuevoEstado) => {
+            await updateDoc(doc(db, "matriculas", id), { estado: nuevoEstado });
+        };
+
+        window.deleteTicket = async (id) => {
+            if(confirm("¿Eliminar este ticket?")) await deleteDoc(doc(db, "tickets_soporte", id));
+        };
+
+        function loadGrid() {
+            const g = document.getElementById('grid-web');
+            onSnapshot(collection(db, curColl), s => {
+                g.innerHTML = "";
+                s.forEach(d => {
+                    const it = d.data();
+                    const media = it.url || it.videoubi || 'https://via.placeholder.com/200';
+                    const textDisplay = it[f1] || 'Sin título';
+                    g.innerHTML += `
+                        <div class="item">
+                            <img src="${media}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1179/1179069.png'">
+                            <h4 title="${textDisplay}">${textDisplay}</h4>
+                            <div style="display:flex; justify-content:space-between; margin-top:10px;">
+                                <button class="btn-edit" onclick="prepareEdit('${d.id}', '${it[f1]||''}', '${it[f2]||''}', '${it[f3]||''}')">EDITAR</button>
+                                <button class="btn-del" onclick="deleteItem('${d.id}')">BORRAR</button>
+                            </div>
+                        </div>`;
+                });
+            });
+        }
+
+        window.prepareEdit = (id, v1, v2, v3) => {
+            document.getElementById('edit-id').value = id;
+            document.getElementById('v1').value = v1; 
+            document.getElementById('v2').value = v2; 
+            document.getElementById('v3').value = v3;
+            document.getElementById('btn-save').innerText = "ACTUALIZAR";
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        };
+
+        window.handleSave = async () => {
+            const id = document.getElementById('edit-id').value;
+            const data = { timestamp: new Date() };
+            data[f1] = document.getElementById('v1').value;
+            data[f2] = document.getElementById('v2').value;
+            data[f3] = document.getElementById('v3').value;
+
+            try {
+                id ? await updateDoc(doc(db, curColl, id), data) : await addDoc(collection(db, curColl), data);
+                document.getElementById('v1').value = ""; document.getElementById('v2').value = ""; document.getElementById('v3').value = "";
+                document.getElementById('edit-id').value = ""; document.getElementById('btn-save').innerText = "GUARDAR";
+                alert("Listo!");
+            } catch(e) { alert("Error al guardar: Verifica los campos"); console.log(e); }
+        };
+
+        window.deleteItem = async (id) => { if(confirm("¿Seguro de borrar este contenido?")) await deleteDoc(doc(db, curColl, id)); };
+
+    </script>
+</body>
+</html>
